@@ -24,37 +24,86 @@ func (l *Lexer) readChar() {
 		l.ch = l.input[l.readPosition]
 	}
 	l.position = l.readPosition
-	l.readPosition += 1
-	l.column += 1
+	l.readPosition++
+	l.column++
 }
 
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
+	l.skipWhitespace()
+
+	col := l.column
+
 	switch l.ch {
 	case '=':
-		tok = newToken(token.ASSIGN, l.ch, l.line, l.column)
+		tok = newToken(token.ASSIGN, l.ch, l.line, col)
 	case ';':
-		tok = newToken(token.SEMICOLON, l.ch, l.line, l.column)
+		tok = newToken(token.SEMICOLON, l.ch, l.line, col)
 	case '(':
-		tok = newToken(token.LPAREN, l.ch, l.line, l.column)
+		tok = newToken(token.LPAREN, l.ch, l.line, col)
 	case ')':
-		tok = newToken(token.RPAREN, l.ch, l.line, l.column)
+		tok = newToken(token.RPAREN, l.ch, l.line, col)
 	case ',':
-		tok = newToken(token.COMMA, l.ch, l.line, l.column)
+		tok = newToken(token.COMMA, l.ch, l.line, col)
 	case '+':
-		tok = newToken(token.PLUS, l.ch, l.line, l.column)
+		tok = newToken(token.PLUS, l.ch, l.line, col)
 	case '{':
-		tok = newToken(token.LBRACE, l.ch, l.line, l.column)
+		tok = newToken(token.LBRACE, l.ch, l.line, col)
 	case '}':
-		tok = newToken(token.RBRACE, l.ch, l.line, l.column)
+		tok = newToken(token.RBRACE, l.ch, l.line, col)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
+		tok.Line = l.line
+		tok.Column = col
+	default:
+		if isLetter(l.ch) {
+			tok.Literal = l.readIdentifier()
+			tok.Type = token.LookupIdent(tok.Literal)
+			tok.Line = l.line
+			tok.Column = col
+			return tok
+		} else if isDigit(l.ch) {
+			tok.Type = token.INT
+			tok.Literal = l.readNumber()
+			tok.Line = l.line
+			tok.Column = col
+			return tok
+		} else {
+			tok = newToken(token.ILLEGAL, l.ch, l.line, col)
+		}
 	}
 
 	l.readChar()
 	return tok
+}
+
+func (l *Lexer) readIdentifier() string {
+	position := l.position
+	for isLetter(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) skipWhitespace() {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' ||
+		l.ch == '\r' {
+		if l.ch == '\n' {
+			l.line++
+			l.column = 0
+		}
+		l.readChar()
+	}
+}
+
+func (l *Lexer) readNumber() string {
+	position := l.position
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
 }
 
 func newToken(tokenType token.TokenType, ch byte, line, col int) token.Token {
@@ -64,4 +113,14 @@ func newToken(tokenType token.TokenType, ch byte, line, col int) token.Token {
 		Line:    line,
 		Column:  col,
 	}
+}
+
+func isLetter(ch byte) bool {
+	return 'a' <= ch && ch <= 'z' ||
+		'A' <= ch && ch <= 'Z' ||
+		ch == '_'
+}
+
+func isDigit(ch byte) bool {
+	return '0' <= ch && ch <= '9'
 }

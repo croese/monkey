@@ -32,7 +32,7 @@ let result = add(five, ten);
 		{token.IDENT, "ten", 2, 5},
 		{token.ASSIGN, "=", 2, 9},
 		{token.INT, "10", 2, 11},
-		{token.SEMICOLON, ";", 2, 12},
+		{token.SEMICOLON, ";", 2, 13},
 		{token.LET, "let", 4, 1},
 		{token.IDENT, "add", 4, 5},
 		{token.ASSIGN, "=", 4, 9},
@@ -47,6 +47,19 @@ let result = add(five, ten);
 		{token.PLUS, "+", 5, 5},
 		{token.IDENT, "y", 5, 7},
 		{token.SEMICOLON, ";", 5, 8},
+		{token.RBRACE, "}", 6, 1},
+		{token.SEMICOLON, ";", 6, 2},
+		{token.LET, "let", 8, 1},
+		{token.IDENT, "result", 8, 5},
+		{token.ASSIGN, "=", 8, 12},
+		{token.IDENT, "add", 8, 14},
+		{token.LPAREN, "(", 8, 17},
+		{token.IDENT, "five", 8, 18},
+		{token.COMMA, ",", 8, 22},
+		{token.IDENT, "ten", 8, 24},
+		{token.RPAREN, ")", 8, 27},
+		{token.SEMICOLON, ";", 8, 28},
+		{token.EOF, "", 9, 1},
 	}
 
 	l := New(input)
