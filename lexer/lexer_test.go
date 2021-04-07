@@ -23,7 +23,11 @@ if (5 < 10) {
   return true;
 } else {
   return false;
-}`
+}
+
+10 == 10;
+10 != 9;
+`
 
 	tests := []struct {
 		expectedType    token.TokenType
@@ -79,7 +83,6 @@ if (5 < 10) {
 		{token.GT, ">", 10, 8},
 		{token.INT, "5", 10, 10},
 		{token.SEMICOLON, ";", 10, 11},
-
 		{token.IF, "if", 12, 1},
 		{token.LPAREN, "(", 12, 4},
 		{token.INT, "5", 12, 5},
@@ -87,21 +90,25 @@ if (5 < 10) {
 		{token.INT, "10", 12, 9},
 		{token.RPAREN, ")", 12, 11},
 		{token.LBRACE, "{", 12, 13},
-
 		{token.RETURN, "return", 13, 3},
 		{token.TRUE, "true", 13, 10},
 		{token.SEMICOLON, ";", 13, 14},
-
 		{token.RBRACE, "}", 14, 1},
 		{token.ELSE, "else", 14, 3},
 		{token.LBRACE, "{", 14, 8},
-
 		{token.RETURN, "return", 15, 3},
 		{token.FALSE, "false", 15, 10},
 		{token.SEMICOLON, ";", 15, 15},
-
 		{token.RBRACE, "}", 16, 1},
-		{token.EOF, "", 16, 2},
+		{token.INT, "10", 18, 1},
+		{token.EQ, "==", 18, 4},
+		{token.INT, "10", 18, 7},
+		{token.SEMICOLON, ";", 18, 9},
+		{token.INT, "10", 19, 1},
+		{token.NOT_EQ, "!=", 19, 4},
+		{token.INT, "9", 19, 7},
+		{token.SEMICOLON, ";", 19, 8},
+		{token.EOF, "", 20, 1},
 	}
 
 	l := New(input)
