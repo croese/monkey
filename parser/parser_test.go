@@ -108,7 +108,7 @@ func TestIdentifierExpression(t *testing.T) {
 	program := p.ParseProgram()
 	checkParserErrors(t, p)
 
-	require.Equal(t, 1, len(program.Statements))
+	require.Equal(t, 1, len(program.Statements), "not enough statements")
 	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
 	if !ok {
 		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
@@ -123,4 +123,29 @@ func TestIdentifierExpression(t *testing.T) {
 
 	require.Equal(t, "foobar", ident.Value)
 	require.Equal(t, "foobar", ident.TokenLiteral())
+}
+
+func TestIntegerLiteralExpression(t *testing.T) {
+	input := "5;"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	require.Equal(t, 1, len(program.Statements), "not enough statements")
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0])
+	}
+
+	literal, ok := stmt.Expression.(*ast.IntegerLiteral)
+	if !ok {
+		t.Fatalf("exp not *ast.IntegerLiteral. got=%T",
+			stmt.Expression)
+	}
+
+	require.Equal(t, int64(5), literal.Value)
+	require.Equal(t, "5", literal.TokenLiteral())
 }
