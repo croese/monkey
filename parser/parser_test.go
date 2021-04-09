@@ -99,3 +99,28 @@ return 993322;
 		assert.Equal(t, "return", returnStmt.TokenLiteral())
 	}
 }
+
+func TestIdentifierExpression(t *testing.T) {
+	input := "foobar;"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	require.Equal(t, 1, len(program.Statements))
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+			program.Statements[0])
+	}
+
+	ident, ok := stmt.Expression.(*ast.Identifier)
+	if !ok {
+		t.Fatalf("exp not *ast.Identifier. got=%T",
+			stmt.Expression)
+	}
+
+	require.Equal(t, "foobar", ident.Value)
+	require.Equal(t, "foobar", ident.TokenLiteral())
+}
